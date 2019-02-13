@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Property of Callum Alexander
 # Instagram - @cal.zander
-# Twitter - callumzander
+# Twitter - @callumzander
 """
 @author: Callum
 """
