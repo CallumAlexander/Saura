@@ -39,6 +39,17 @@ def GetTemperature(temp):
 
 
 
-def GetAltitude():    
-    pass
+def GetAltitude(alt):    
+    
+    tempRnd = random.randint(1,101)
+    
+    lower = random.randint(1, tempRnd)
+    
+    upper = random.randint(tempRnd + 5, 110)
+
+    alt = round(random.uniform(lower, upper + 1), 3)
+    
+    return alt
+    
+    
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Property of Callum Alexander
 # Instagram - @cal.zander
-# Twitter - @callumzander
+# Twitter - callum_alxndr
 """
 @author: Callum
 """
@@ -25,6 +25,7 @@ period = 0
 
 loc = [0,0,0]
 temp = 0
+alt = 0
 action = ''
 
 
@@ -81,12 +82,15 @@ def GenerateData(lower, upper, data):
     return data
 
 
-def StartDisplay(period, data, lower, upper, loc, temp):
+def StartDisplay(period, data, lower, upper, loc, temp, alt):
     
     dataDifference = 0
     
     tempDiff = 0
     lastTemp = 0
+    
+    altDiff = 0
+    lastAlt = 0
     
     step = 0
     lastdata = 0
@@ -104,9 +108,12 @@ def StartDisplay(period, data, lower, upper, loc, temp):
         data = GenerateData(lower, upper, data)
         loc = GetCoordinates(loc)
         temp = GetTemperature(temp)
+        alt = GetAltitude(alt)
+        
 
         dataDifference = data - lastdata
         tempDiff = temp - lastTemp
+        altDiff = alt - lastAlt
         
         
         print('Time : ' + str(step) + ' seconds elapsed since takeoff')
@@ -131,6 +138,16 @@ def StartDisplay(period, data, lower, upper, loc, temp):
             print('<<<')
         print('dif: ' + str(round(tempDiff, 1)))
         print('------------------------------')
+        
+        print('------------------------------')
+        print('Altitude --- ' + str(round(alt)))
+        if alt > lastAlt:
+            print('>>>')
+        else:
+            print('<<<')
+        print('dif: ' + str(round(altDiff, 1)))
+        print('------------------------------')
+
 
    
         lower += 3
@@ -166,7 +183,7 @@ def RecordingSetup():
     time.sleep(0.5)
     
     if start == 'y' or start == 'Y':
-        StartDisplay(period, data,lower,upper, loc, temp)
+        StartDisplay(period, data,lower,upper, loc, temp, alt)
     elif start == 'n' or start == 'N':
         time.sleep(1.1)
         print(' Terminating Procedure')
