@@ -30,7 +30,7 @@ action = ''
 
 
 def Control(action):
-    action = input('>>>')
+    action = input(' >>>')
     
     if action == 'start':
         time.sleep(0.75)
@@ -45,14 +45,19 @@ def Control(action):
         time.sleep(2)
         clear()
     elif action == 'credits':
+        time.sleep(1)
         Credit()
     elif action =='home':
+        time.sleep(0.5)
         Home()
     elif action == 'restart':
         time.sleep(1)
         print('RESTARTING...')
         time.sleep(2)
         Restart()
+    elif action == 'help':
+        time.sleep(1)
+        Help()
     else:
         clear()
         Title()
@@ -141,19 +146,41 @@ def StartDisplay(period, data, lower, upper, loc, temp):
         
 def RecordingSetup():
     print(' ')
-    period = input('How long would you like to record data for (Seconds) ?    ')
+    period = input(' How long would you like to record data for (Seconds) ?    ')
+ 
+    while int(period) < 1:
+        print(' Invalid Input - Time must be greater than 0')
+        print(' Please enter again')
+        period = input(' How long would you like to record data for (Seconds) ?    ')
+    
     time.sleep(2)
     print(' ')
-    print('The system will record data for ' + period + ' seconds.')
+    print(' The system will record data for ' + period + ' seconds.')
     period = int(period)
 
     time.sleep(3)
-    start = input('Press y to start recording. WARNING - Recording will begin instantly     ')
+    
+    print(' Press y to start recording.')
+    start = input(' Press n to terminate this task.  WARNING - Recording will begin instantly     ')
     
     time.sleep(0.5)
     
     if start == 'y' or start == 'Y':
         StartDisplay(period, data,lower,upper, loc, temp)
+    elif start == 'n' or start == 'N':
+        time.sleep(1.1)
+        print(' Terminating Procedure')
+        time.sleep(1.9)
+        Home()
+    else:
+        print(' Invalid Command')
+        time.sleep(1.35)
+        print(' Restarting task...')
+        time.sleep(1)
+        clear()
+        Title()
+        RecordingSetup()
+        
     Control(action)
     
     
@@ -196,7 +223,21 @@ def Restart():
 
     print(' ')
     Control(action)
+    
+def Help():
+    clear()
+    Title()
+    
+    print(' ')
+    print(' start --- Begins recording data')
+    print(' home ---- Returns to the home screen')
+    print(' clear --- Clears the screen')
+    print(' credits - Displays the credits')
+    print(' restart - Restarts the system')
+    print(' end ----- Quits the system')
+    print(' help ---- Displays all the available commands')
 
+    Control(action)
     
 Intro()
 
