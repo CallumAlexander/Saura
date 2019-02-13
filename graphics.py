@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 13 17:42:50 2019
 
 @author: Callum
 """
