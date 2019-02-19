@@ -17,6 +17,9 @@ ser
 
 ser.open()
 ser.is_open
+
+
+
 step = 0
 
 while True:
@@ -28,10 +31,10 @@ while True:
 
     
     
-print('')
-print('')
+#print('')
+#print('')
     
-print(str(step))
+#print(str(step))
 
 
 ser.close()
