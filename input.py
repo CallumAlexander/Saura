@@ -7,13 +7,12 @@
 """
 
 import serial
-import time
 
 
 ser = serial.Serial()
-ser.baudrate = 19200
+ser.baudrate = 115200
+
 ser.port = 'COM4'
-ser
 
 ser.open()
 ser.is_open
@@ -25,7 +24,7 @@ step = 0
 while True:
 
     step+= 1
-    line = ser.read(10)
+    line = ser.readline()
     print(str(step))
     print(line) 
 
