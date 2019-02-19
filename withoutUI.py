@@ -7,6 +7,8 @@
 """
 
 import os
+import sys
+#import pandas as pd
 clear = lambda: os.system("cls")
 
 import time
@@ -31,7 +33,7 @@ action = ''
 
 
 def Control(action):
-    action = input(' >>>')
+    action = input(' >>> ')
     
     if action == 'start':
         time.sleep(0.75)
@@ -42,9 +44,10 @@ def Control(action):
         Control(action)
     elif action == 'end':
         time.sleep(1)
-        print('Thank you for using Saura')
-        time.sleep(2)
-        clear()
+        print(' Thank you for using Saura')
+        time.sleep(1)
+        print(' Saura is sponsored by Evolution Executive Search')
+        time.sleep(3)
     elif action == 'credits':
         time.sleep(1)
         Credit()
@@ -53,7 +56,7 @@ def Control(action):
         Home()
     elif action == 'restart':
         time.sleep(1)
-        print('RESTARTING...')
+        print(' RESTARTING...')
         time.sleep(2)
         Restart()
     elif action == 'help':
@@ -62,8 +65,9 @@ def Control(action):
     else:
         clear()
         Title()
-        print('Invalid Command')
-        print('If you wish to exit the program, input "end"')
+        print(' Invalid Command')
+        print(' If you wish to exit the program, input "end"')
+        print(' For more information on the available commands, input "help"')
         Control(action)
         
     
@@ -116,36 +120,36 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
         altDiff = alt - lastAlt
         
         
-        print('Time : ' + str(step) + ' seconds elapsed since takeoff')
+        print(' Time : ' + str(step) + ' seconds elapsed since takeoff')
         print(' ')
-        print('Co-ordinates - ' +  ''.join(str(i) for i in loc))
+        print(' Co-ordinates - ' +  ''.join(str(i) for i in loc))
         print(' ')
         
         print('------------------------------')
-        print('Data --- ' + str(data))
+        print(' Data --- ' + str(data))
         if data > lastdata:
-            print('>>>')
+            print(' >>>')
         else:
-            print('<<<')
-        print('dif: ' + str(round(dataDifference, 1)))
+            print(' <<<')
+        print(' dif: ' + str(round(dataDifference, 1)))
         print('------------------------------')
         
         print('------------------------------')
-        print('Temperature --- ' + str(round(temp)))
+        print(' Temperature --- ' + str(round(temp)))
         if temp > lastTemp:
-            print('>>>')
+            print(' >>>')
         else:
-            print('<<<')
-        print('dif: ' + str(round(tempDiff, 1)))
+            print(' <<<')
+        print(' dif: ' + str(round(tempDiff, 1)))
         print('------------------------------')
         
         print('------------------------------')
-        print('Altitude --- ' + str(round(alt)))
+        print(' Altitude --- ' + str(round(alt)))
         if alt > lastAlt:
-            print('>>>')
+            print(' >>>')
         else:
-            print('<<<')
-        print('dif: ' + str(round(altDiff, 1)))
+            print(' <<<')
+        print(' dif: ' + str(round(altDiff, 1)))
         print('------------------------------')
 
 
@@ -157,18 +161,32 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
         step += 1
    
         lastdata = data
+
+
+    #print(' ')
+    #print(period + ' has passed')
      
         
         
         
 def RecordingSetup():
+
+    clear()
+    Title()
+
     print(' ')
-    period = input(' How long would you like to record data for (Seconds) ?    ')
+    print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
+    period = input(' >>> ')
+
+    status = period.isdigit()
  
-    while int(period) < 1:
-        print(' Invalid Input - Time must be greater than 0')
+    while status == False:
+        print(' Invalid Input')
         print(' Please enter again')
-        period = input(' How long would you like to record data for (Seconds) ?    ')
+        print(' ')
+        print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
+        period = input(' >>> ')
+        status = period.isdigit()
     
     time.sleep(2)
     print(' ')
@@ -177,8 +195,9 @@ def RecordingSetup():
 
     time.sleep(3)
     
-    print(' Press y to start recording.')
-    start = input(' Press n to terminate this task.  WARNING - Recording will begin instantly     ')
+    print(' Press y > enter to start recording.')
+    print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
+    start = input(' >>> ')
     
     time.sleep(0.5)
     
@@ -186,7 +205,7 @@ def RecordingSetup():
         StartDisplay(period, data,lower,upper, loc, temp, alt)
     elif start == 'n' or start == 'N':
         time.sleep(1.1)
-        print(' Terminating Procedure')
+        print(' Terminating Procedure...')
         time.sleep(1.9)
         Home()
     else:
@@ -206,14 +225,18 @@ def Credit():
     Title()
     print(' ')
     print(' Developed by Callum Alexander')
+    print(' Licensing: Currently unavailable')
+    print(' ')
+    print(' Saura is sponsored by Evolution Executive Search')
+    print(' ')
     print(' Saura Team: ')
-    print('      > Fraser Rennie')
-    print('      > Bertie Whiteford')
-    print('      > Suhit Amin')
-    print('      > Jamie Geddes')
-    print('      > Ariana Johnson')
-    print('      > Azkah Sardar')
-    print('      > Callum Alexander')
+    print('      > Fraser Rennie -------- Project Manager')
+    print('      > Bertie Whiteford ----- Mechanics')
+    print('      > Suhit Amin ----------- Outreach & Finance ')
+    print('      > Jamie Geddes --------- Mechanics & Design')
+    print('      > Ariana Johnson ------- Mathematics')
+    print('      > Azkah Sardar --------- Parachute')
+    print('      > Callum Alexander ----- Software')
     print(' ')
     Control(action)
     
@@ -224,6 +247,7 @@ def Home():
     
     print(" Welcome traveller")
     print(" This is the official Cansat Saura User Interface and Ground Control xx")
+    print(" ")
     print(" This system is a command line interface")
     print(" To view the list of commands available for this system, please input 'help'.")
     print(' ')
@@ -259,21 +283,8 @@ def Help():
 Intro()
 
 
-time.sleep(1.5)
+time.sleep(0.5)
 
 print(' ')
 Control(action)
 
-
-    
-
-
-
-
-
-
-        
-
-
-    
-    

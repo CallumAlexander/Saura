@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
+# Property of Callum Alexander
+# Instagram - @cal.zander
+# Twitter - callum_alxndr
 """
-
 @author: Callum
 """
 
 import os
+import sys
 clear = lambda: os.system("cls")
 
 import time
@@ -28,14 +31,15 @@ def Intro():
     print(" |_____/ \__,_|\__,_|_|  \__,_|")
     time.sleep(delay)
     print("                               ")
-    
     time.sleep(1)
     print(" Welcome traveller")
-    time.sleep(4)
+    time.sleep(2)
     print(" This is the official Cansat Saura User Interface and Ground Control xx")
-    time.sleep(0.75)
+    time.sleep(3)
+    print(" ")
     print(" This system is a command line interface")
     print(" To view the list of commands available for this system, please input 'help'.")
+    time.sleep(3)
     
     
     
@@ -48,7 +52,7 @@ def Title():
     print(" |_____/ \__,_|\__,_|_|  \__,_|")
     print("                               ")
     
-    
+
     
     
     
