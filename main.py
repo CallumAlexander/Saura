@@ -5,7 +5,7 @@
 """
 @author: Callum
 """
-
+import serial
 import os
 import sys
 #import pandas as pd
@@ -15,7 +15,6 @@ import time
 import random
 from getData_Test import GetCoordinates, GetTemperature, GetAltitude
 from graphics import Intro, Title
-
 
 
 
@@ -51,6 +50,9 @@ def Control(action):
     elif action == 'credits':
         time.sleep(1)
         Credit()
+    #elif action == 'status':
+        #time.sleep(1)
+        #print(status)
     elif action =='home':
         time.sleep(0.5)
         Home()
@@ -234,8 +236,6 @@ def Credit():
     print('      > Bertie Whiteford ----- Mechanics')
     print('      > Suhit Amin ----------- Outreach & Finance ')
     print('      > Jamie Geddes --------- Mechanics & Design')
-    print('      > Ariana Johnson ------- Mathematics')
-    print('      > Azkah Sardar --------- Parachute')
     print('      > Callum Alexander ----- Software')
     print(' ')
     Control(action)
@@ -282,8 +282,25 @@ def Help():
     
 Intro()
 
-
-time.sleep(0.5)
+ser = serial.Serial()
+print(' -------------------')
+print(' pyserial set up')
+time.sleep(0.4)
+ser.baudrate = 115200
+print(' Baudrate set to -115200-')
+time.sleep(0.4)
+ser.port = 'COM4'
+print(' Port name confirmed as -COM4-')
+time.sleep(0.4)
+ser.open()
+print(' Port opening attempted...')
+time.sleep(2)
+print(' Port open successful : ' + str(ser.is_open))
+print(' -------------------')
+time.sleep(0.7)
+print(" This system is a command line interface")
+print(" To view the list of commands available for this system, please input 'help'.")
+time.sleep(3)
 
 print(' ')
 Control(action)
