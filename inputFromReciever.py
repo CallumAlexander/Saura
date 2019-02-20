@@ -9,29 +9,27 @@
 import serial
 
 
-def startConnection(connected):
 
-	ser = serial.Serial()
-	ser.baudrate = 115200
+#def startConnection():
+    ser = serial.Serial()
+    ser.baudrate = 115200
 
-	ser.port = 'COM4'
+    ser.port = 'COM4'
 
-	ser.open()
-	ser.is_open
-
-	connected = set.is_open
-	return connected
+    ser.open()
+    ser.is_open
+   # return ser
 
 
+startConnection()
 
 step = 0
-
 while True:
 
     step+= 1
     line = ser.readline()
     print(str(step))
-    print(line) 
+    print(str(line, 'utf-8')) 
 
     
     
@@ -40,8 +38,11 @@ while True:
     
 #print(str(step))
 
+def close(ser):
 
-ser.close()
+
+    
+close(ser)
 
 
 
