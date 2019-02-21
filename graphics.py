@@ -36,6 +36,9 @@ def Intro():
     time.sleep(2)
     print(" This is the official Cansat Saura User Interface and Ground Control xx")
     time.sleep(3)
+    print(" This system is a command line interface")
+    print(" To view the list of commands available for this system, please input 'help'.")
+    time.sleep(3)
     
     
     
