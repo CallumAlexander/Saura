@@ -5,6 +5,14 @@
 """
 @author: Callum
 """
+
+
+'''
+THIS CODE HAS NOT BEEN TESTED WITH THE COMS
+USE AT YOUR OWN DISCRETION
+
+
+'''
 import serial
 import os
 import sys
@@ -12,15 +20,9 @@ import sys
 clear = lambda: os.system("cls")
 
 import time
-import random
-from getData_Test import GetCoordinates, GetTemperature, GetAltitude
 from graphics import Intro, Title
 
 
-
-lower = 1
-upper = lower + 5
-data = 0
 
 period = 0
 
@@ -35,7 +37,6 @@ def Control(action):
     action = input(' >>> ')
     
     if action == 'start':
-        time.sleep(0.75)
         RecordingSetup()
     elif action == 'clear':
         clear()
@@ -48,21 +49,18 @@ def Control(action):
         print(' Saura is sponsored by Evolution Executive Search')
         time.sleep(3)
     elif action == 'credits':
-        time.sleep(1)
+        time.sleep(0.3)
         Credit()
-    #elif action == 'status':
-        #time.sleep(1)
-        #print(status)
     elif action =='home':
-        time.sleep(0.5)
+        time.sleep(0.3)
         Home()
     elif action == 'restart':
-        time.sleep(1)
+        time.sleep(0.3)
         print(' RESTARTING...')
         time.sleep(2)
         Restart()
     elif action == 'help':
-        time.sleep(1)
+        time.sleep(0.3)
         Help()
     else:
         clear()
@@ -72,25 +70,13 @@ def Control(action):
         print(' For more information on the available commands, input "help"')
         Control(action)
         
-    
 
 
-def GenerateData(lower, upper, data):
+def StartDisplay(period, loc, temp, alt):
     
-    tempRnd = random.randint(1,101)
     
-    lower = random.randint(1, tempRnd)
-    
-    upper = random.randint(tempRnd + 5, 110)
-
-    data = round(random.uniform(lower, upper + 1), 3)
-    
-    return data
-
-
-def StartDisplay(period, data, lower, upper, loc, temp, alt):
-    
-    dataDifference = 0
+    loc=[0,0,0]
+   # dataDifference = 0
     
     tempDiff = 0
     lastTemp = 0
@@ -99,7 +85,28 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
     lastAlt = 0
     
     step = 0
-    lastdata = 0
+    #lastdata = 0
+    #'
+    ser = serial.Serial()
+    print(' -------------------')
+    print(' pyserial set up')
+    ser.baudrate = 115200
+    print(' Baudrate set to -115200-')
+    ser.port = 'COM4'
+    print(' Port name confirmed as -COM4-')
+    ser.open()
+    print(' Port opening attempted...')
+    time.sleep(0.2)
+    print(' Port open successful : ' + str(ser.is_open))
+    print(' -------------------')
+    time.sleep(0.7)
+
+    #'
+    
+    
+
+ 
+    
     while step <= period:
         
         clear() # this line hear prevents the timer from building up lines of messages, only seems to work in cmd
@@ -110,33 +117,89 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
         print('--------------Saura Ground Control---------------')
         print('-------------------------------------------------')
 
-        
-        data = GenerateData(lower, upper, data)
-        loc = GetCoordinates(loc)
-        temp = GetTemperature(temp)
-        alt = GetAltitude(alt)
-        
 
-        dataDifference = data - lastdata
+
         tempDiff = temp - lastTemp
         altDiff = alt - lastAlt
         
         
-        print(' Time : ' + str(step) + ' seconds elapsed since takeoff')
-        print(' ')
-        print(' Co-ordinates - ' +  ''.join(str(i) for i in loc))
-        print(' ')
+        '''
+        Data is read from the port
+        Data is read in to the program in a binary form and therefore, must
+        be converted to a string. This can be done by using a decode operator on
+        the binary data type, while adding utf-8 decoding as a parameter.
+        '''
+        #-------------------------------------------
+        currentline1 = ser.readline()
+        currentline1 = currentline1.decode("utf-8")
+        currentline2 = ser.readline()
+        currentline2 = currentline2.decode("utf-8")
+        #------------------------------------------
         
-        print('------------------------------')
-        print(' Data --- ' + str(data))
-        if data > lastdata:
-            print(' >>>')
+'''
+        Data is reciever from the communication port in every 2 lines.
+        To ensure that data is not missed, a simple condition is used where the line 
+        containing the data has a 2nd string index of 'e'.
+        
+        Data is preprocessed. First by splicing the first 14 characters from the
+        front of the line.
+        Then, a transfer array is initialised. A string split operation is performed
+        that splits the data at commas and assigns it to each index in the transfer array.
+        The final variables are then assigned the data from the transfer array.
+        
+        Alt and Temp are set to floating point variables.
+
+'''
+        
+        if currentline1[1] == 'e':
+            currentline1 = currentline1[15:]
+            #print(currentline1.split(","))
+            
+            transfer = [0,0,0,0,0]
+            transfer = currentline1.split(",")
+            print(transfer)
+         
+            loc[0] = transfer[0]
+            loc[1] = transfer[1]
+            loc[2] = transfer[2]
+            alt = transfer[3]
+            temp = transfer[4]
+            
+            alt = float(alt)
+            temp = float(temp)
+  
+
+            
         else:
-            print(' <<<')
-        print(' dif: ' + str(round(dataDifference, 1)))
+            currentline2 = currentline2[15:]
+            print(currentline2.split(","))
+      
+            transfer = [0,0,0,0]
+            transfer = currentline2.split(",")
+            print(transfer)
+            
+            loc[0] = transfer[0]
+            loc[1] = transfer[1]
+            loc[2] = transfer[2]
+            alt = transfer[3]
+            temp = transfer[4]
+            
+            alt = float(alt)
+            temp = float(temp)
+
+
+        #displaying coordinates
+        print(' ')
+        print(' ')
+        print(' ')
+        print(' Steps : ' + str(step) + ' out of ' + str(period))
+        print(' ')
+        print(' Co-ordinates - ' +  ''.join(str(i) for i in loc)
+        )
+        print(' ')
         print('------------------------------')
         
-        print('------------------------------')
+        #displaying temperature
         print(' Temperature --- ' + str(round(temp)))
         if temp > lastTemp:
             print(' >>>')
@@ -145,6 +208,8 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
         print(' dif: ' + str(round(tempDiff, 1)))
         print('------------------------------')
         
+        
+        #Displaying altitude
         print('------------------------------')
         print(' Altitude --- ' + str(round(alt)))
         if alt > lastAlt:
@@ -156,17 +221,14 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
 
 
    
-        lower += 3
-        upper += 3
+
    
-        time.sleep(1)
+        time.sleep(0.5)
         step += 1
    
-        lastdata = data
+        lastAlt = alt
+        lastTemp = temp
 
-
-    #print(' ')
-    #print(period + ' has passed')
      
         
         
@@ -190,25 +252,25 @@ def RecordingSetup():
         period = input(' >>> ')
         status = period.isdigit()
     
-    time.sleep(2)
+    time.sleep(0.3)
     print(' ')
     print(' The system will record data for ' + period + ' seconds.')
     period = int(period)
 
-    time.sleep(3)
+    time.sleep(0.3)
     
     print(' Press y > enter to start recording.')
     print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
     start = input(' >>> ')
     
-    time.sleep(0.5)
+    time.sleep(0.3)
     
     if start == 'y' or start == 'Y':
-        StartDisplay(period, data,lower,upper, loc, temp, alt)
+        StartDisplay(period, loc, temp, alt)
     elif start == 'n' or start == 'N':
-        time.sleep(1.1)
+        time.sleep(1)
         print(' Terminating Procedure...')
-        time.sleep(1.9)
+        time.sleep(0.5)
         Home()
     else:
         print(' Invalid Command')
@@ -237,6 +299,7 @@ def Credit():
     print('      > Suhit Amin ----------- Outreach & Finance ')
     print('      > Jamie Geddes --------- Mechanics & Design')
     print('      > Callum Alexander ----- Software')
+    print('      > Ariana Johnson ------- Support')
     print(' ')
     Control(action)
     
@@ -282,25 +345,6 @@ def Help():
     
 Intro()
 
-ser = serial.Serial()
-print(' -------------------')
-print(' pyserial set up')
-time.sleep(0.4)
-ser.baudrate = 115200
-print(' Baudrate set to -115200-')
-time.sleep(0.4)
-ser.port = 'COM4'
-print(' Port name confirmed as -COM4-')
-time.sleep(0.4)
-ser.open()
-print(' Port opening attempted...')
-time.sleep(2)
-print(' Port open successful : ' + str(ser.is_open))
-print(' -------------------')
-time.sleep(0.7)
-print(" This system is a command line interface")
-print(" To view the list of commands available for this system, please input 'help'.")
-time.sleep(3)
 
 print(' ')
 Control(action)
