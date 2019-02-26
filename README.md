@@ -29,8 +29,10 @@ Pyserial python library implememted.
 Data received from the ground reciever is parsed and displayed.
 Random testdata removed.
 
-0.5.1 - Test Patch
-
+0.5.1 - 26/02/19, Test Patch
+General cleaning up of old commented code.
+Removal of debugging prints and variables.
+Added comments to certain functions.
 
 
 Contact Information:
