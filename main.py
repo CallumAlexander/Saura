@@ -13,14 +13,9 @@ clear = lambda: os.system("cls")
 
 import time
 import random
-from getData_Test import GetCoordinates, GetTemperature, GetAltitude
 from graphics import Intro, Title
 
 
-
-lower = 1
-upper = lower + 5
-data = 0
 
 period = 0
 
@@ -72,25 +67,15 @@ def Control(action):
         print(' For more information on the available commands, input "help"')
         Control(action)
         
-    
 
 
-def GenerateData(lower, upper, data):
+def StartDisplay(period, loc, temp, alt):
     
-    tempRnd = random.randint(1,101)
+    #FOR TESTING
+    period = 30
     
-    lower = random.randint(1, tempRnd)
-    
-    upper = random.randint(tempRnd + 5, 110)
-
-    data = round(random.uniform(lower, upper + 1), 3)
-    
-    return data
-
-
-def StartDisplay(period, data, lower, upper, loc, temp, alt):
-    
-    dataDifference = 0
+    loc=[0,0,0]
+   # dataDifference = 0
     
     tempDiff = 0
     lastTemp = 0
@@ -99,7 +84,28 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
     lastAlt = 0
     
     step = 0
-    lastdata = 0
+    #lastdata = 0
+    #'
+    ser = serial.Serial()
+    print(' -------------------')
+    print(' pyserial set up')
+    ser.baudrate = 115200
+    print(' Baudrate set to -115200-')
+    ser.port = 'COM4'
+    print(' Port name confirmed as -COM4-')
+    ser.open()
+    print(' Port opening attempted...')
+    time.sleep(0.2)
+    print(' Port open successful : ' + str(ser.is_open))
+    print(' -------------------')
+    time.sleep(0.7)
+
+    #'
+    
+    
+
+ 
+    
     while step <= period:
         
         clear() # this line hear prevents the timer from building up lines of messages, only seems to work in cmd
@@ -111,31 +117,98 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
         print('-------------------------------------------------')
 
         
-        data = GenerateData(lower, upper, data)
-        loc = GetCoordinates(loc)
-        temp = GetTemperature(temp)
-        alt = GetAltitude(alt)
+        #data = GenerateData(lower, upper, data)
+        #loc = GetCoordinates(loc)
+        #temp = GetTemperature(temp)
+        #alt = GetAltitude(alt)
         
 
-        dataDifference = data - lastdata
-        tempDiff = temp - lastTemp
-        altDiff = alt - lastAlt
+       # dataDifference = data - lastdata
+       # tempDiff = temp - lastTemp
+        #altDiff = alt - lastAlt
+        
+        x = 0
+        
+        while x < 5:
+            currentline1 = ser.readline()
+            currentline1 = currentline1.decode("utf-8")
+            currentline2 = ser.readline()
+            currentline2 = currentline2.decode("utf-8")
+            x+=1
+            
+        x = 6
+        
+        if currentline1[1] == 'e':
+            currentline1 = currentline1[15:]
+            print(currentline1.split(","))
+            
+            transfer = [0,0,0,0]
+            transfer = currentline1.split(",")
+            print(transfer)
+         
+            loc[0] = transfer[0]
+            loc[1] = transfer[1]
+            loc[2] = transfer[2]
+            alt = transfer[3]
+            temp = transfer[4]
+            
+            alt = float(alt)
+            temp = float(temp)
+            
+            '''
+            print(loc[0])
+            print(loc[1])
+            print(loc[2])
+            print(alt)
+            print(temp)
+'''
+            
+        else:
+            currentline2 = currentline2[15:]
+            print(currentline2.split(","))
+      
+            transfer = [0,0,0,0]
+            transfer = currentline2.split(",")
+            print(transfer)
+            
+            loc[0] = transfer[0]
+            loc[1] = transfer[1]
+            loc[2] = transfer[2]
+            alt = transfer[3]
+            temp = transfer[4]
+            
+            alt = float(alt)
+            temp = float(temp)
+            
+            '''
+            print(loc[0])
+            print(loc[1])
+            print(loc[2])
+            print(alt)
+            print(temp)
+     '''
         
         
+        
+        print(' ')
+        print(' ')
+        print(' ')
         print(' Time : ' + str(step) + ' seconds elapsed since takeoff')
         print(' ')
-        print(' Co-ordinates - ' +  ''.join(str(i) for i in loc))
+        print(' Co-ordinates - ' +  ''.join(str(i) for i in loc)
+        )
         print(' ')
-        
+        '''
         print('------------------------------')
         print(' Data --- ' + str(data))
         if data > lastdata:
             print(' >>>')
         else:
             print(' <<<')
+            
         print(' dif: ' + str(round(dataDifference, 1)))
         print('------------------------------')
-        
+        '''
         print('------------------------------')
         print(' Temperature --- ' + str(round(temp)))
         if temp > lastTemp:
@@ -156,13 +229,13 @@ def StartDisplay(period, data, lower, upper, loc, temp, alt):
 
 
    
-        lower += 3
-        upper += 3
+        #lower += 3
+        #upper += 3
    
-        time.sleep(1)
+        time.sleep(0.5)
         step += 1
    
-        lastdata = data
+        #lastdata = data
 
 
     #print(' ')
@@ -204,7 +277,7 @@ def RecordingSetup():
     time.sleep(0.5)
     
     if start == 'y' or start == 'Y':
-        StartDisplay(period, data,lower,upper, loc, temp, alt)
+        StartDisplay(period, loc, temp, alt)
     elif start == 'n' or start == 'N':
         time.sleep(1.1)
         print(' Terminating Procedure...')
@@ -237,6 +310,7 @@ def Credit():
     print('      > Suhit Amin ----------- Outreach & Finance ')
     print('      > Jamie Geddes --------- Mechanics & Design')
     print('      > Callum Alexander ----- Software')
+    print('      > Ariana Johnson ------- Support')
     print(' ')
     Control(action)
     
@@ -282,25 +356,6 @@ def Help():
     
 Intro()
 
-ser = serial.Serial()
-print(' -------------------')
-print(' pyserial set up')
-time.sleep(0.4)
-ser.baudrate = 115200
-print(' Baudrate set to -115200-')
-time.sleep(0.4)
-ser.port = 'COM4'
-print(' Port name confirmed as -COM4-')
-time.sleep(0.4)
-ser.open()
-print(' Port opening attempted...')
-time.sleep(2)
-print(' Port open successful : ' + str(ser.is_open))
-print(' -------------------')
-time.sleep(0.7)
-print(" This system is a command line interface")
-print(" To view the list of commands available for this system, please input 'help'.")
-time.sleep(3)
 
 print(' ')
 Control(action)
