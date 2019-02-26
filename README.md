@@ -21,7 +21,7 @@ Further analysis of values - addition of change in value and difference arrow ad
 Simple control methods added - start recording, end program, home return.
 Scrolling title - ASCII art graphic of the word 'SAURA'.
 
-0.4.0
+0.3.1
 ASCII art graphic of the word 'SAURA' remains at the top of the interface perpetually.
 
 1.0.0.beta - Current Build
