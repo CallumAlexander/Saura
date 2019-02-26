@@ -29,6 +29,10 @@ Pyserial python library implememted.
 Data received from the ground reciever is parsed and displayed.
 Random testdata removed.
 
+0.5.1 - Test Patch
+
+
+
 Contact Information:
 Developer - Callum Alexander , callumalexander.personal@gmail.com
 Developer - Fraser Rennie , ...
