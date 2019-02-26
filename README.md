@@ -7,7 +7,7 @@ Ensure Python 3.5 or later is installed
 Run this command within the present command prompt / terminal - pip install pyserial - and follow the onscreen instructions until completed.
 Run 'main.py'
 
-Changelog
+<u>Changelog</u>
 
 0.1.0
 Prerelease testdata generated using random values.
@@ -24,12 +24,12 @@ Scrolling title - ASCII art graphic of the word 'SAURA'.
 0.4.0
 ASCII art graphic of the word 'SAURA' remains at the top of the interface perpetually.
 
-0.5.0 - Current Build
+1.0.0.beta - Current Build
 Pyserial python library implememted.
 Data received from the ground reciever is parsed and displayed.
 Random testdata removed.
 
-0.5.1.1 - 26/02/19, Test Patch
+1.0.1.beta - 26/02/19, Test Patch
 General cleaning up of old commented code.
 Removal of debugging prints and variables.
 Added comments to certain functions.
@@ -38,4 +38,6 @@ Added comments to certain functions.
 Contact Information:
 Developer - Callum Alexander , callumalexander.personal@gmail.com
 Developer - Fraser Rennie , ...
+
+This project uses semantic versioning
 
