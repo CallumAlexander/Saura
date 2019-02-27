@@ -37,7 +37,7 @@ awaiting testing
 
 Contact Information:
 Developer - Callum Alexander , callumalexander.personal@gmail.com
-Developer - Fraser Rennie , ...
+Developer - Fraser Rennie , fjrennie1@gmail.com
 
 This project uses semantic versioning
 
