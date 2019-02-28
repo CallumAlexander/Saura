@@ -5,6 +5,14 @@
 """
 @author: Callum
 """
+
+
+'''
+THIS CODE HAS NOT BEEN TESTED WITH THE COMS
+USE AT YOUR OWN DISCRETION
+
+
+'''
 import serial
 import os
 import sys
@@ -14,7 +22,6 @@ import xlsxwriter
 import numpy as np
 
 import time
-import random
 from graphics import Intro, Title
 
 
@@ -30,7 +37,6 @@ def Control(action):
     action = input(' >>> ')
     
     if action == 'start':
-        time.sleep(0.75)
         RecordingSetup()
     elif action == 'clear':
         clear()
@@ -43,21 +49,18 @@ def Control(action):
         print(' Saura is sponsored by Evolution Executive Search')
         time.sleep(3)
     elif action == 'credits':
-        time.sleep(1)
+        time.sleep(0.3)
         Credit()
-    #elif action == 'status':
-        #time.sleep(1)
-        #print(status)
     elif action =='home':
-        time.sleep(0.5)
+        time.sleep(0.3)
         Home()
     elif action == 'restart':
-        time.sleep(1)
+        time.sleep(0.3)
         print(' RESTARTING...')
         time.sleep(2)
         Restart()
     elif action == 'help':
-        time.sleep(1)
+        time.sleep(0.3)
         Help()
     else:
         clear()
@@ -70,12 +73,12 @@ def Control(action):
 
 
 def StartDisplay(period, loc, temp, alt):
+
     
     #FOR TESTING
     global vals
     vals = np.zeros([period+1, 5])
     print(vals)
-    
     loc=[0,0,0]
    # dataDifference = 0
     
@@ -110,27 +113,24 @@ def StartDisplay(period, loc, temp, alt):
     
     while step <= period:
         
-        #data = GenerateData(lower, upper, data)
-        #loc = GetCoordinates(loc)
-        #temp = GetTemperature(temp)
-        #alt = GetAltitude(alt)
+
+        tempDiff = temp - lastTemp
+        altDiff = alt - lastAlt
         
 
-        #dataDifference = data - lastdata
-        #tempDiff = temp - lastTemp
-        #altDiff = alt - lastAlt
-        
-        x = 0
-        
-        while x < 5:
-            currentline1 = ser.readline()
-            currentline1 = currentline1.decode("utf-8")
-            currentline2 = ser.readline()
-            currentline2 = currentline2.decode("utf-8")
-            x+=1
-            
-        x = 6
-		
+         '''
+        Data is read from the port
+        Data is read in to the program in a binary form and therefore, must
+        be converted to a string. This can be done by using a decode operator on
+        the binary data type, while adding utf-8 decoding as a parameter.
+        '''
+        #-------------------------------------------
+        currentline1 = ser.readline()
+        currentline1 = currentline1.decode("utf-8")
+        currentline2 = ser.readline()
+        currentline2 = currentline2.decode("utf-8")
+        #------------------------------------------
+
         clear() #this line hear prevents the timer from building up lines of messages, only seems to work in cmd
         
         Title()
@@ -138,7 +138,24 @@ def StartDisplay(period, loc, temp, alt):
         print('-------------------------------------------------')
         print('--------------Saura Ground Control---------------')
         print('-------------------------------------------------')
+
         
+  
+  '''
+        Data is reciever from the communication port in every 2 lines.
+        To ensure that data is not missed, a simple condition is used where the line 
+        containing the data has a 2nd string index of 'e'.
+        
+        Data is preprocessed. First by splicing the first 14 characters from the
+        front of the line.
+        Then, a transfer array is initialised. A string split operation is performed
+        that splits the data at commas and assigns it to each index in the transfer array.
+        The final variables are then assigned the data from the transfer array.
+        
+        Alt and Temp are set to floating point variables.
+
+'''
+  
         if currentline1[1] == 'e':
             currentline1 = currentline1[15:]
             print(currentline1.split(","))
@@ -216,18 +233,7 @@ def StartDisplay(period, loc, temp, alt):
         print(' Co-ordinates - ' +  ''.join(str(i) for i in loc)
         )
         print(' ')
-        '''
-        print('------------------------------')
-        print(' Data --- ' + str(data))
-        if data > lastdata:
-            print(' >>>')
-        else:
-            print(' <<<')
-            
-        print(' dif: ' + str(round(dataDifference, 1)))
-        print('------------------------------')
-        '''
-        print('------------------------------')
+
         print(' Temperature --- ' + str(round(temp)))
         if temp > lastTemp:
             print(' >>>')
@@ -236,6 +242,8 @@ def StartDisplay(period, loc, temp, alt):
         print(' dif: ' + str(round(tempDiff, 1)))
         print('------------------------------')
         
+        
+        #Displaying altitude
         print('------------------------------')
         print(' Altitude --- ' + str(round(alt)))
         if alt > lastAlt:
@@ -245,15 +253,12 @@ def StartDisplay(period, loc, temp, alt):
         print(' dif: ' + str(round(altDiff, 1)))
         print('------------------------------')
 
-
-   
-        #lower += 3
-        #upper += 3
-   
         time.sleep(0.1)
         step += 1
    
-        #lastdata = data
+    
+        lastAlt = alt
+        lastTemp = temp
 
     print("Finished reading, export? Y/N")
     export = input(' >>> ')
@@ -262,6 +267,7 @@ def StartDisplay(period, loc, temp, alt):
 
     #print(' ')
     #print(period + ' has passed')
+
      
         
 def exporter(period):
@@ -320,25 +326,23 @@ def RecordingSetup():
         period = input(' >>> ')
         status = period.isdigit()
     
-    time.sleep(0)
     print(' ')
     print(' The system will record data for ' + period + ' seconds.')
     period = int(period)
 
-    time.sleep(0)
-    
+
     print(' Press y > enter to start recording.')
     print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
     start = input(' >>> ')
     
-    time.sleep(0)
+
     
     if start == 'y' or start == 'Y':
         StartDisplay(period, loc, temp, alt)
     elif start == 'n' or start == 'N':
-        time.sleep(1.1)
+        time.sleep(1)
         print(' Terminating Procedure...')
-        time.sleep(1.9)
+        time.sleep(0.5)
         Home()
     else:
         print(' Invalid Command')
