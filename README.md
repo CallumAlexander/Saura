@@ -35,6 +35,9 @@ Removal of debugging prints and variables.
 Added comments to certain functions.
 awaiting testing
 
+fraserbranch280219 - 28/02/2019
+Addition of exporter() function. Tested with comms
+
 Contact Information:
 Developer - Callum Alexander , callumalexander.personal@gmail.com
 Developer - Fraser Rennie , fjrennie1@gmail.com
