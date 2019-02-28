@@ -10,6 +10,8 @@ import os
 import sys
 #import pandas as pd
 clear = lambda: os.system("cls")
+import xlsxwriter
+import numpy as np
 
 import time
 import random
@@ -23,8 +25,6 @@ loc = [0,0,0]
 temp = 0
 alt = 0
 action = ''
-
-
 
 def Control(action):
     action = input(' >>> ')
@@ -72,7 +72,9 @@ def Control(action):
 def StartDisplay(period, loc, temp, alt):
     
     #FOR TESTING
-    period = 30
+    global vals
+    vals = np.zeros([period+1, 5])
+    print(vals)
     
     loc=[0,0,0]
    # dataDifference = 0
@@ -91,8 +93,8 @@ def StartDisplay(period, loc, temp, alt):
     print(' pyserial set up')
     ser.baudrate = 115200
     print(' Baudrate set to -115200-')
-    ser.port = 'COM4'
-    print(' Port name confirmed as -COM4-')
+    ser.port = 'COM5'
+    print(' Port name confirmed as -COM5-')
     ser.open()
     print(' Port opening attempted...')
     time.sleep(0.2)
@@ -108,23 +110,14 @@ def StartDisplay(period, loc, temp, alt):
     
     while step <= period:
         
-        clear() # this line hear prevents the timer from building up lines of messages, only seems to work in cmd
-        
-        Title()
-        
-        print('-------------------------------------------------')
-        print('--------------Saura Ground Control---------------')
-        print('-------------------------------------------------')
-
-        
         #data = GenerateData(lower, upper, data)
         #loc = GetCoordinates(loc)
         #temp = GetTemperature(temp)
         #alt = GetAltitude(alt)
         
 
-       # dataDifference = data - lastdata
-       # tempDiff = temp - lastTemp
+        #dataDifference = data - lastdata
+        #tempDiff = temp - lastTemp
         #altDiff = alt - lastAlt
         
         x = 0
@@ -137,12 +130,20 @@ def StartDisplay(period, loc, temp, alt):
             x+=1
             
         x = 6
+		
+        clear() #this line hear prevents the timer from building up lines of messages, only seems to work in cmd
+        
+        Title()
+        
+        print('-------------------------------------------------')
+        print('--------------Saura Ground Control---------------')
+        print('-------------------------------------------------')
         
         if currentline1[1] == 'e':
             currentline1 = currentline1[15:]
             print(currentline1.split(","))
             
-            transfer = [0,0,0,0]
+            transfer = [0,0,0,0,0]
             transfer = currentline1.split(",")
             print(transfer)
          
@@ -153,11 +154,20 @@ def StartDisplay(period, loc, temp, alt):
             temp = transfer[4]
             
             alt = float(alt)
+            #temp = float(temp)
+
+            temp = temp[:-4]
+            print(temp)
             temp = float(temp)
+            print(temp)
+            transfer[4] = temp
             
+            for i in range(0,5):
+                vals[step,i] = transfer[i]
+            print(vals)
             '''
             print(loc[0])
-            print(loc[1])
+            print(loc[1])   
             print(loc[2])
             print(alt)
             print(temp)
@@ -167,7 +177,7 @@ def StartDisplay(period, loc, temp, alt):
             currentline2 = currentline2[15:]
             print(currentline2.split(","))
       
-            transfer = [0,0,0,0]
+            transfer = [0,0,0,0,0]
             transfer = currentline2.split(",")
             print(transfer)
             
@@ -178,7 +188,15 @@ def StartDisplay(period, loc, temp, alt):
             temp = transfer[4]
             
             alt = float(alt)
+            #temp = float(temp)
+
+            temp = temp[:-4]
             temp = float(temp)
+            transfer[4] = temp
+            
+            for i in range(0,4):
+                vals[step,i] = transfer[i]
+            print(vals)
             
             '''
             print(loc[0])
@@ -232,23 +250,62 @@ def StartDisplay(period, loc, temp, alt):
         #lower += 3
         #upper += 3
    
-        time.sleep(0.5)
+        time.sleep(0.1)
         step += 1
    
         #lastdata = data
 
+    print("Finished reading, export? Y/N")
+    export = input(' >>> ')
+    if export == "y" or export == "Y":
+        exporter(period)
 
     #print(' ')
     #print(period + ' has passed')
      
         
-        
-        
+def exporter(period):
+    global vals
+    print ("Name the sheet to create and export to")
+    sheet = input(' >>> ')
+    
+    workbook = xlsxwriter.Workbook(sheet + '.xlsx')
+    worksheet = workbook.add_worksheet()
+    #chart = workbook.add_chart({'type': 'scatter'})
+
+    bold = workbook.add_format({'bold': 1})
+
+    worksheet.write('B2', 'x', bold)
+    worksheet.write('C2', 'y', bold)
+    worksheet.write('D2', 'z', bold)
+    worksheet.write('E2', 'altitude', bold)
+    worksheet.write('F2', 'temp', bold)
+
+    for i in range(0,period+1):
+        for a in range(0,5):
+            worksheet.write((i + 2), (a + 1), vals[i,a])
+    
+    '''chart.add_series({'categories': '=Sheet1!$B$3:$B$'+str(vals+2),
+                      'values': '=Sheet1!$I$3:$I$'+str(vals+2),
+                      'trendline': {
+                            'type': 'linear',
+                            'order': 1,
+                        },})
+    worksheet.insert_chart('A7', chart)
+    '''
+
+    workbook.close()
+
+    print("Successfully Exported")
+    Control(action)
+
+
 def RecordingSetup():
 
     clear()
     Title()
 
+    global period
     print(' ')
     print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
     period = input(' >>> ')
@@ -263,18 +320,18 @@ def RecordingSetup():
         period = input(' >>> ')
         status = period.isdigit()
     
-    time.sleep(2)
+    time.sleep(0)
     print(' ')
     print(' The system will record data for ' + period + ' seconds.')
     period = int(period)
 
-    time.sleep(3)
+    time.sleep(0)
     
     print(' Press y > enter to start recording.')
     print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
     start = input(' >>> ')
     
-    time.sleep(0.5)
+    time.sleep(0)
     
     if start == 'y' or start == 'Y':
         StartDisplay(period, loc, temp, alt)
