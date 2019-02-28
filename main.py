@@ -18,6 +18,8 @@ import os
 import sys
 #import pandas as pd
 clear = lambda: os.system("cls")
+import xlsxwriter
+import numpy as np
 
 import time
 from graphics import Intro, Title
@@ -30,8 +32,6 @@ loc = [0,0,0]
 temp = 0
 alt = 0
 action = ''
-
-
 
 def Control(action):
     action = input(' >>> ')
@@ -73,8 +73,12 @@ def Control(action):
 
 
 def StartDisplay(period, loc, temp, alt):
+
     
-    
+    #FOR TESTING
+    global vals
+    vals = np.zeros([period+1, 5])
+    print(vals)
     loc=[0,0,0]
    # dataDifference = 0
     
@@ -92,8 +96,8 @@ def StartDisplay(period, loc, temp, alt):
     print(' pyserial set up')
     ser.baudrate = 115200
     print(' Baudrate set to -115200-')
-    ser.port = 'COM4'
-    print(' Port name confirmed as -COM4-')
+    ser.port = 'COM5'
+    print(' Port name confirmed as -COM5-')
     ser.open()
     print(' Port opening attempted...')
     time.sleep(0.2)
@@ -109,21 +113,12 @@ def StartDisplay(period, loc, temp, alt):
     
     while step <= period:
         
-        clear() # this line hear prevents the timer from building up lines of messages, only seems to work in cmd
-        
-        Title()
-        
-        print('-------------------------------------------------')
-        print('--------------Saura Ground Control---------------')
-        print('-------------------------------------------------')
-
-
 
         tempDiff = temp - lastTemp
         altDiff = alt - lastAlt
         
-        
-        '''
+
+         '''
         Data is read from the port
         Data is read in to the program in a binary form and therefore, must
         be converted to a string. This can be done by using a decode operator on
@@ -135,8 +130,18 @@ def StartDisplay(period, loc, temp, alt):
         currentline2 = ser.readline()
         currentline2 = currentline2.decode("utf-8")
         #------------------------------------------
+
+        clear() #this line hear prevents the timer from building up lines of messages, only seems to work in cmd
         
-'''
+        Title()
+        
+        print('-------------------------------------------------')
+        print('--------------Saura Ground Control---------------')
+        print('-------------------------------------------------')
+
+        
+  
+  '''
         Data is reciever from the communication port in every 2 lines.
         To ensure that data is not missed, a simple condition is used where the line 
         containing the data has a 2nd string index of 'e'.
@@ -150,10 +155,10 @@ def StartDisplay(period, loc, temp, alt):
         Alt and Temp are set to floating point variables.
 
 '''
-        
+  
         if currentline1[1] == 'e':
             currentline1 = currentline1[15:]
-            #print(currentline1.split(","))
+            print(currentline1.split(","))
             
             transfer = [0,0,0,0,0]
             transfer = currentline1.split(",")
@@ -166,15 +171,30 @@ def StartDisplay(period, loc, temp, alt):
             temp = transfer[4]
             
             alt = float(alt)
-            temp = float(temp)
-  
+            #temp = float(temp)
 
+            temp = temp[:-4]
+            print(temp)
+            temp = float(temp)
+            print(temp)
+            transfer[4] = temp
+            
+            for i in range(0,5):
+                vals[step,i] = transfer[i]
+            print(vals)
+            '''
+            print(loc[0])
+            print(loc[1])   
+            print(loc[2])
+            print(alt)
+            print(temp)
+'''
             
         else:
             currentline2 = currentline2[15:]
             print(currentline2.split(","))
       
-            transfer = [0,0,0,0]
+            transfer = [0,0,0,0,0]
             transfer = currentline2.split(",")
             print(transfer)
             
@@ -185,21 +205,35 @@ def StartDisplay(period, loc, temp, alt):
             temp = transfer[4]
             
             alt = float(alt)
+            #temp = float(temp)
+
+            temp = temp[:-4]
             temp = float(temp)
-
-
-        #displaying coordinates
+            transfer[4] = temp
+            
+            for i in range(0,4):
+                vals[step,i] = transfer[i]
+            print(vals)
+            
+            '''
+            print(loc[0])
+            print(loc[1])
+            print(loc[2])
+            print(alt)
+            print(temp)
+     '''
+        
+        
+        
         print(' ')
         print(' ')
         print(' ')
-        print(' Steps : ' + str(step) + ' out of ' + str(period))
+        print(' Time : ' + str(step) + ' seconds elapsed since takeoff')
         print(' ')
         print(' Co-ordinates - ' +  ''.join(str(i) for i in loc)
         )
         print(' ')
-        print('------------------------------')
-        
-        #displaying temperature
+
         print(' Temperature --- ' + str(round(temp)))
         if temp > lastTemp:
             print(' >>>')
@@ -219,25 +253,65 @@ def StartDisplay(period, loc, temp, alt):
         print(' dif: ' + str(round(altDiff, 1)))
         print('------------------------------')
 
-
-   
-
-   
-        time.sleep(0.5)
+        time.sleep(0.1)
         step += 1
    
+    
         lastAlt = alt
         lastTemp = temp
 
+    print("Finished reading, export? Y/N")
+    export = input(' >>> ')
+    if export == "y" or export == "Y":
+        exporter(period)
+
+    #print(' ')
+    #print(period + ' has passed')
+
      
         
-        
-        
+def exporter(period):
+    global vals
+    print ("Name the sheet to create and export to")
+    sheet = input(' >>> ')
+    
+    workbook = xlsxwriter.Workbook(sheet + '.xlsx')
+    worksheet = workbook.add_worksheet()
+    #chart = workbook.add_chart({'type': 'scatter'})
+
+    bold = workbook.add_format({'bold': 1})
+
+    worksheet.write('B2', 'x', bold)
+    worksheet.write('C2', 'y', bold)
+    worksheet.write('D2', 'z', bold)
+    worksheet.write('E2', 'altitude', bold)
+    worksheet.write('F2', 'temp', bold)
+
+    for i in range(0,period+1):
+        for a in range(0,5):
+            worksheet.write((i + 2), (a + 1), vals[i,a])
+    
+    '''chart.add_series({'categories': '=Sheet1!$B$3:$B$'+str(vals+2),
+                      'values': '=Sheet1!$I$3:$I$'+str(vals+2),
+                      'trendline': {
+                            'type': 'linear',
+                            'order': 1,
+                        },})
+    worksheet.insert_chart('A7', chart)
+    '''
+
+    workbook.close()
+
+    print("Successfully Exported")
+    Control(action)
+
+
 def RecordingSetup():
 
     clear()
     Title()
 
+    global period
     print(' ')
     print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
     period = input(' >>> ')
@@ -252,18 +326,16 @@ def RecordingSetup():
         period = input(' >>> ')
         status = period.isdigit()
     
-    time.sleep(0.3)
     print(' ')
     print(' The system will record data for ' + period + ' seconds.')
     period = int(period)
 
-    time.sleep(0.3)
-    
+
     print(' Press y > enter to start recording.')
     print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
     start = input(' >>> ')
     
-    time.sleep(0.3)
+
     
     if start == 'y' or start == 'Y':
         StartDisplay(period, loc, temp, alt)
