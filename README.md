@@ -10,7 +10,7 @@ Run 'main.py'
 <h2><u>Changelog</u></h2>
 
 <h3>1.1.0.beta - 07/03/19 // Current Build</h3>
-Exports all data recieved to a .xlsx file.
+ * Exports all data recieved to a .xlsx file.
 Prompts the user to enter the name of the port they wish to use.
 Recording works in terms of steps instead of the number of elapsed seconds.
 Optimization of the data preprocessing that reduces run time.
