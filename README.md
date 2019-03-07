@@ -10,13 +10,13 @@ Run 'main.py'
 <h2><u>Changelog</u></h2>
 
 <h3>1.1.0.beta - 07/03/19 // Current Build</h3>
- * Exports all data recieved to a .xlsx file.
-Prompts the user to enter the name of the port they wish to use.
-Recording works in terms of steps instead of the number of elapsed seconds.
-Optimization of the data preprocessing that reduces run time.
-Heisenbug, IndexError, that was periodically thrown is fixed.
-Credits updated
-General system optimization to reduce run time including removing testing data, comments and time.sleep statements
+* Exports all data recieved to a .xlsx file.
+* Prompts the user to enter the name of the port they wish to use.
+* Recording works in terms of steps instead of the number of elapsed seconds.
+* Optimization of the data preprocessing that reduces run time.
+* Heisenbug, IndexError, that was periodically thrown is fixed.
+* Credits updated
+* General system optimization to reduce run time including removing testing data, comments and time.sleep statements
 
 <h4>1.0.1.beta - 26/02/19</h4>
 General cleaning up of old commented code.
