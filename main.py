@@ -5,6 +5,8 @@
 """
 @author: Callum
 """
+
+
 import serial
 import os
 import sys
@@ -12,25 +14,25 @@ import sys
 clear = lambda: os.system("cls")
 import xlsxwriter
 import numpy as np
+import time
 
 import time
-import random
 from graphics import Intro, Title
 
 
 
 period = 0
-
+comVar = ''
 loc = [0,0,0]
+loc[1] = 0
 temp = 0
 alt = 0
 action = ''
 
 def Control(action):
-    action = input(' >>> ')
+    action = input(' >>> $control  ')
     
     if action == 'start':
-        time.sleep(0.75)
         RecordingSetup()
     elif action == 'clear':
         clear()
@@ -43,22 +45,22 @@ def Control(action):
         print(' Saura is sponsored by Evolution Executive Search')
         time.sleep(3)
     elif action == 'credits':
-        time.sleep(1)
+        time.sleep(0.3)
         Credit()
-    #elif action == 'status':
-        #time.sleep(1)
-        #print(status)
     elif action =='home':
-        time.sleep(0.5)
+        time.sleep(0.3)
         Home()
     elif action == 'restart':
-        time.sleep(1)
+        time.sleep(0.3)
         print(' RESTARTING...')
         time.sleep(2)
         Restart()
     elif action == 'help':
-        time.sleep(1)
+        time.sleep(0.3)
         Help()
+    elif action == 'set com':
+        time.sleep(0.3)
+        SetCom(comVar)
     else:
         clear()
         Title()
@@ -69,13 +71,13 @@ def Control(action):
         
 
 
-def StartDisplay(period, loc, temp, alt):
+def StartDisplay(period, loc, temp, alt, comVar):
+
     
     #FOR TESTING
     global vals
     vals = np.zeros([period+1, 5])
     print(vals)
-    
     loc=[0,0,0]
    # dataDifference = 0
     
@@ -85,16 +87,20 @@ def StartDisplay(period, loc, temp, alt):
     altDiff = 0
     lastAlt = 0
     
+    delay = 0.85
+    
     step = 0
-    #lastdata = 0
-    #'
+    
+    initTime = time.time()
+    currentTime = time.time()
+    
     ser = serial.Serial()
     print(' -------------------')
     print(' pyserial set up')
     ser.baudrate = 115200
     print(' Baudrate set to -115200-')
-    ser.port = 'COM5'
-    print(' Port name confirmed as -COM5-')
+    ser.port = comVar
+    print(' Port name confirmed as -' + comVar + '-')
     ser.open()
     print(' Port opening attempted...')
     time.sleep(0.2)
@@ -103,34 +109,31 @@ def StartDisplay(period, loc, temp, alt):
     time.sleep(0.7)
 
     #'
-    
-    
-
  
-    
     while step <= period:
         
-        #data = GenerateData(lower, upper, data)
-        #loc = GetCoordinates(loc)
-        #temp = GetTemperature(temp)
-        #alt = GetAltitude(alt)
+        currentTime = time.time()
+        
+        tStamp = currentTime - initTime
+        
+        
+        tempDiff = temp - lastTemp
+        altDiff = alt - lastAlt
         
 
-        #dataDifference = data - lastdata
-        #tempDiff = temp - lastTemp
-        #altDiff = alt - lastAlt
-        
-        x = 0
-        
-        while x < 5:
-            currentline1 = ser.readline()
-            currentline1 = currentline1.decode("utf-8")
-            currentline2 = ser.readline()
-            currentline2 = currentline2.decode("utf-8")
-            x+=1
-            
-        x = 6
-		
+        '''
+        Data is read from the port
+        Data is read in to the program in a binary form and therefore, must
+        be converted to a string. This can be done by using a decode operator on
+        the binary data type, while adding utf-8 decoding as a parameter.
+        '''
+        #-------------------------------------------
+        currentline1 = ser.readline()
+        currentline1 = currentline1.decode("utf-8")
+        currentline2 = ser.readline()
+        currentline2 = currentline2.decode("utf-8")
+        #------------------------------------------
+
         clear() #this line hear prevents the timer from building up lines of messages, only seems to work in cmd
         
         Title()
@@ -138,97 +141,43 @@ def StartDisplay(period, loc, temp, alt):
         print('-------------------------------------------------')
         print('--------------Saura Ground Control---------------')
         print('-------------------------------------------------')
+
         
+  
+        '''
+        Data is reciever from the communication port in every 2 lines.
+        To ensure that data is not missed, a simple condition is used where the line 
+        containing the data has a 2nd string index of 'e'.
+        
+        Data is preprocessed. First by splicing the first 14 characters from the
+        front of the line.
+        Then, a transfer array is initialised. A string split operation is performed
+        that splits the data at commas and assigns it to each index in the transfer array.
+        The final variables are then assigned the data from the transfer array.
+        
+        Alt and Temp are set to floating point variables.
+  
+        '''
         if currentline1[1] == 'e':
-            currentline1 = currentline1[15:]
-            print(currentline1.split(","))
-            
-            transfer = [0,0,0,0,0]
-            transfer = currentline1.split(",")
-            print(transfer)
-         
-            loc[0] = transfer[0]
-            loc[1] = transfer[1]
-            loc[2] = transfer[2]
-            alt = transfer[3]
-            temp = transfer[4]
-            
-            alt = float(alt)
-            #temp = float(temp)
-
-            temp = temp[:-4]
-            print(temp)
-            temp = float(temp)
-            print(temp)
-            transfer[4] = temp
-            
-            for i in range(0,5):
-                vals[step,i] = transfer[i]
-            print(vals)
-            '''
-            print(loc[0])
-            print(loc[1])   
-            print(loc[2])
-            print(alt)
-            print(temp)
-'''
-            
+            alt, temp, loc[:] = preprocess(currentline1, step, temp, alt)
         else:
-            currentline2 = currentline2[15:]
-            print(currentline2.split(","))
-      
-            transfer = [0,0,0,0,0]
-            transfer = currentline2.split(",")
-            print(transfer)
-            
-            loc[0] = transfer[0]
-            loc[1] = transfer[1]
-            loc[2] = transfer[2]
-            alt = transfer[3]
-            temp = transfer[4]
-            
-            alt = float(alt)
-            #temp = float(temp)
-
-            temp = temp[:-4]
-            temp = float(temp)
-            transfer[4] = temp
-            
-            for i in range(0,4):
-                vals[step,i] = transfer[i]
-            print(vals)
-            
-            '''
-            print(loc[0])
-            print(loc[1])
-            print(loc[2])
-            print(alt)
-            print(temp)
-     '''
+            alt, temp, loc[:] = preprocess(currentline2, step, temp, alt )
         
         
+        tempDiff = temp - lastTemp
+        altDiff = alt - lastAlt
         
         print(' ')
         print(' ')
+        print('Time stamp : '+ round(tStamp))
         print(' ')
-        print(' Time : ' + str(step) + ' seconds elapsed since takeoff')
+        print(' Readings : ' + str(step) + ' readings elapsed since takeoff')
         print(' ')
         print(' Co-ordinates - ' +  ''.join(str(i) for i in loc)
         )
         print(' ')
-        '''
-        print('------------------------------')
-        print(' Data --- ' + str(data))
-        if data > lastdata:
-            print(' >>>')
-        else:
-            print(' <<<')
-            
-        print(' dif: ' + str(round(dataDifference, 1)))
-        print('------------------------------')
-        '''
-        print('------------------------------')
-        print(' Temperature --- ' + str(round(temp)))
+
+        print(' Temperature --- ' + str(round(temp, 2)))
         if temp > lastTemp:
             print(' >>>')
         else:
@@ -236,8 +185,10 @@ def StartDisplay(period, loc, temp, alt):
         print(' dif: ' + str(round(tempDiff, 1)))
         print('------------------------------')
         
+        
+        #Displaying altitude
         print('------------------------------')
-        print(' Altitude --- ' + str(round(alt)))
+        print(' Altitude --- ' + str(round(alt, 2)))
         if alt > lastAlt:
             print(' >>>')
         else:
@@ -246,22 +197,24 @@ def StartDisplay(period, loc, temp, alt):
         print('------------------------------')
 
 
-   
-        #lower += 3
-        #upper += 3
-   
-        time.sleep(0.1)
+        lastAlt = alt
+        lastTemp = temp
+
+        time.sleep(delay)
         step += 1
    
-        #lastdata = data
-
+    
+    ser.close()
+    print('Port ' + comVar + ' closed')
     print("Finished reading, export? Y/N")
-    export = input(' >>> ')
+    
+    export = input(' >>> $exporter  ')
     if export == "y" or export == "Y":
         exporter(period)
 
     #print(' ')
     #print(period + ' has passed')
+
      
         
 def exporter(period):
@@ -308,7 +261,7 @@ def RecordingSetup():
     global period
     print(' ')
     print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
-    period = input(' >>> ')
+    period = input(' >>> $SetUp ')
 
     status = period.isdigit()
  
@@ -316,29 +269,33 @@ def RecordingSetup():
         print(' Invalid Input')
         print(' Please enter again')
         print(' ')
-        print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
-        period = input(' >>> ')
+        print(' How many readings would you like to record?, input "0" for instantaneous data.')
+        period = input(' >>> $SetUp ')
         status = period.isdigit()
     
-    time.sleep(0)
+    print(' Please enter the name of the port that you wish to use.')
+    print(' Typical port names include COM4 , COM5 ')
+    comVar = input(' >>> $SetUp ')
+    comVar = comVar.upper()
+    print(' Using port ' + comVar)
+    
     print(' ')
-    print(' The system will record data for ' + period + ' seconds.')
+    print(' The system will record ' + period + ' readings.')
     period = int(period)
 
-    time.sleep(0)
-    
+
     print(' Press y > enter to start recording.')
     print(' Press n > enter to terminate this task.  WARNING - Recording will begin instantly')
-    start = input(' >>> ')
+    start = input(' >>> $SetUp ')
     
-    time.sleep(0)
+
     
     if start == 'y' or start == 'Y':
-        StartDisplay(period, loc, temp, alt)
+        StartDisplay(period, loc, temp, alt, comVar)
     elif start == 'n' or start == 'N':
-        time.sleep(1.1)
+        time.sleep(1)
         print(' Terminating Procedure...')
-        time.sleep(1.9)
+        time.sleep(0.5)
         Home()
     else:
         print(' Invalid Command')
@@ -356,8 +313,8 @@ def Credit():
     clear()
     Title()
     print(' ')
-    print(' Developed by Callum Alexander')
-    print(' Licensing: Currently unavailable')
+    print(' Developed by Callum Alexander & Fraser Rennie')
+    print(' Licensing: Awaiting Licensing')
     print(' ')
     print(' Saura is sponsored by Evolution Executive Search')
     print(' ')
@@ -365,9 +322,7 @@ def Credit():
     print('      > Fraser Rennie -------- Project Manager')
     print('      > Bertie Whiteford ----- Mechanics')
     print('      > Suhit Amin ----------- Outreach & Finance ')
-    print('      > Jamie Geddes --------- Mechanics & Design')
     print('      > Callum Alexander ----- Software')
-    print('      > Ariana Johnson ------- Support')
     print(' ')
     Control(action)
     
@@ -410,8 +365,50 @@ def Help():
     print(' help ---- Displays all the available commands')
 
     Control(action)
+ 
+def preprocess(currentline, step, temp, alt):
+            currentline = currentline[15:]
+            loc[1] = ''
+            transfer = [0,0,0,0,0]
+            transfer = currentline.split(",")
+
+            loc[0] = transfer[0]
+ 
+            while True:
+                try:
+                    loc[1] = transfer[1]
+                    break
+                except IndexError:
+                    print("Error - restarting, lol just proved the heisenbug but now I've captured it haha x")
+                    StartDisplay(period, loc, temp, alt, comVar)
+                    
+            loc[2] = transfer[2]
+            alt = transfer[3]
+            temp = transfer[4]
+            
+            alt = float(alt)
+            print(alt)
+
+            temp = temp[:-4]
+            temp = float(temp)
+            transfer[4] = temp
+            
+            for i in range(0,5):
+                vals[step,i] = transfer[i]
+            print(vals)
+
+            return alt, temp, loc[:]
     
+
+def SetCom(comVar):
+    clear()
+    Title()
+    
+   
+    Control(action)
+
 Intro()
+
 
 
 print(' ')
