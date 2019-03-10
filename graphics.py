@@ -33,15 +33,15 @@ def Intro():
     print("                               ")
     time.sleep(1)
     print(" Welcome traveller")
-    time.sleep(2)
     print(" This is the official Cansat Saura User Interface and Ground Control xx")
-    time.sleep(3)
     print(" This system is a command line interface")
     print(" To view the list of commands available for this system, please input 'help'.")
-    time.sleep(3)
     
     
-    
+'''
+This subprogram below is used to display the Saura Logo
+
+'''
     
 def Title():
     print("   _____                       ")
@@ -55,4 +55,7 @@ def Title():
 
     
     
-    
+#--meme notes for developers--
+#time.sleep is the bane of frasers existance 
+
+#any linter errors or messages that you see concerning the intro sub are irrelevent, just ignore them
