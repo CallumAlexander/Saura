@@ -2,11 +2,24 @@
 # Property of Callum Alexander
 # Instagram - @cal.zander
 # Twitter - callum_alxndr
+# contact - callumalexander.personal@gmail.com
+#       reference @Saura - Cansat
+
+"""
+---   Quick notes for future developers   ---
+
+* Multiline strings and comments are used synonymously
+
+
+"""
+
+
+
 """
 @author: Callum
 """
 
-
+#--- Imports
 import serial
 import os
 import sys
@@ -18,9 +31,9 @@ import time
 
 import time
 from graphics import Intro, Title
+#----------------
 
-
-
+#--- var init -------
 period = 0
 comVar = ''
 loc = [0,0,0]
@@ -28,6 +41,7 @@ loc[1] = 0
 temp = 0
 alt = 0
 action = ''
+#------------------
 
 def Control(action):
     action = input(' >>> $control  ')
@@ -58,9 +72,6 @@ def Control(action):
     elif action == 'help':
         time.sleep(0.3)
         Help()
-    elif action == 'set com':
-        time.sleep(0.3)
-        SetCom(comVar)
     else:
         clear()
         Title()
@@ -75,19 +86,17 @@ def StartDisplay(period, loc, temp, alt, comVar):
 
     
     #FOR TESTING
+    #fraser wrote this testing code here, not callum
     global vals
     vals = np.zeros([period+1, 5])
     print(vals)
     loc=[0,0,0]
-   # dataDifference = 0
     
     tempDiff = 0
     lastTemp = 0
     
     altDiff = 0
     lastAlt = 0
-    
-    delay = 0.85
     
     step = 0
     
@@ -108,7 +117,6 @@ def StartDisplay(period, loc, temp, alt, comVar):
     print(' -------------------')
     time.sleep(0.7)
 
-    #'
  
     while step <= period:
         
@@ -167,6 +175,9 @@ def StartDisplay(period, loc, temp, alt, comVar):
         tempDiff = temp - lastTemp
         altDiff = alt - lastAlt
         
+
+        #--- DISPLAYING DATA ------------
+
         print(' ')
         print(' ')
         print('Time stamp : '+ round(tStamp))
@@ -200,8 +211,10 @@ def StartDisplay(period, loc, temp, alt, comVar):
         lastAlt = alt
         lastTemp = temp
 
-        time.sleep(delay)
+        
         step += 1
+
+        # -------------------------------------------------
    
     
     ser.close()
@@ -218,6 +231,8 @@ def StartDisplay(period, loc, temp, alt, comVar):
      
         
 def exporter(period):
+
+    #this is fraser's cool exporter procedure
     global vals
     print ("Name the sheet to create and export to")
     sheet = input(' >>> ')
@@ -263,7 +278,7 @@ def RecordingSetup():
     print(' How many seconds would you like to record data for?, input "0" for instantaneous data.')
     period = input(' >>> $SetUp ')
 
-    status = period.isdigit()
+    status = period.isdigit() # ignore any linter messages here troops xx
  
     while status == False:
         print(' Invalid Input')
@@ -373,7 +388,12 @@ def preprocess(currentline, step, temp, alt):
             transfer = currentline.split(",")
 
             loc[0] = transfer[0]
- 
+
+            '''         
+            --- Note below ---
+                Index out of range error kept being thrown upon this specific assignment.
+                This try statement will restart the data collection and display when the error is thrown.
+            '''
             while True:
                 try:
                     loc[1] = transfer[1]
@@ -400,13 +420,6 @@ def preprocess(currentline, step, temp, alt):
             return alt, temp, loc[:]
     
 
-def SetCom(comVar):
-    clear()
-    Title()
-    
-   
-    Control(action)
-
 Intro()
 
 
@@ -414,3 +427,12 @@ Intro()
 print(' ')
 Control(action)
 
+
+
+#--meme notes for developers--
+#greyhound is class
+#there is a heisenbug somewhere in this code, fraser is the problem it exists xxxxx
+#I don't know if my linter works :3
+#oh wait...
+#it does
+#...just not well lol
