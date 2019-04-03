@@ -38,10 +38,7 @@ def Intro():
     print(" To view the list of commands available for this system, please input 'help'.")
     
     
-'''
-This subprogram below is used to display the Saura Logo
-
-'''
+    
     
 def Title():
     print("   _____                       ")
@@ -55,7 +52,4 @@ def Title():
 
     
     
-#--meme notes for developers--
-#time.sleep is the bane of frasers existance 
-
-#any linter errors or messages that you see concerning the intro sub are irrelevent, just ignore them
+    
