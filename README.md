@@ -9,7 +9,16 @@ Run 'main.py'
 
 <h2><u>Changelog</u></h2>
 
-<h3>1.1.1.beta - 10/03/19 // Current Build</h3>
+<h3>3.2.0 - 01/04/19 // Current Build<h3>
+Graphical User Interface implemented using tkinter module library.
+Ability to control the system using determined entities and inputs within the user interface frame.
+Bug fixes and optimization.
+
+<h4>2.0.beta<h4>
+New command implementation.
+Bug fixes and optimization
+
+<h4>1.1.1.beta - 10/03/19</h4>
 Bug Fixes and optimization.
 
 
