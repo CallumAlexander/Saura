@@ -50,7 +50,7 @@ Prints information to command line.
 
 Contact Information:
 Developer - Callum Alexander , callumalexander.personal@gmail.com
-Developer - Fraser Rennie , fjrennie1@gmail.com
+Developer - Fraser Rennie , fjrennie1@outlook.com
 
 This project uses semantic versioning
 
